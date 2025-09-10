@@ -105,6 +105,16 @@ def chatbot(request):
 
 
 def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username','').strip()
+        password = request.POST.get('password','')
+
+        user = auth.authenticate(request, username=username, password=password)
+        if user is not None:
+            auth.login(request, user)
+            return redirect('chatbot')  # ชื่อเส้นทางของคุณถูกแล้ว
+        else:
+            return render(request, 'login.html', {'error_message': 'Invalid username or password'})
     return render(request, 'login.html')
 
 def register(request):
@@ -147,3 +157,6 @@ def register(request):
 def logout(request):
     auth.logout(request)
     return redirect('chatbot')
+
+def folder(request):
+    return render(request, 'folder.html')
