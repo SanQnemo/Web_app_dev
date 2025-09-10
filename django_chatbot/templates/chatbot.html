@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% load static %} 
+{% block styles %}
+<style>
+  :root{
+    --bg:#000;
+    --panel:#fff;
+    --muted:#6b7280;
+    --radius:24px;
+    --gap:24px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:#111;
+    font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position:fixed; inset:16px 24px auto 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    color:#fff; z-index:10;
+  }
+  .brand{display:flex; align-items:center; gap:12px; font-weight:800; font-size:28px}
+  .brand .bot{
+    width:44px; height:55px; border-radius:20px/14px;
+    background-image: url("{% static '25346-removebg-preview.png' %}");
+    background-size: cover;
+    background-position: center;
+    
+  }
+
+
+  /* ---------- App grid ---------- */
+  .app{
+    height:100vh;
+    padding:88px 24px 24px;      /* เว้นที่บนสำหรับ topbar */
+    display:grid; grid-template-columns:280px 1fr 320px; gap:var(--gap);
+  }
+  .panel{
+    background:var(--panel);
+    border-radius:var(--radius);
+    padding:20px;
+    display:flex; flex-direction:column;
+    min-height:0;                 /* ให้ภายใน scroll ได้ */
+  }
+  .panel h3{margin:0 0 10px}
+
+  /* ---------- Left (sidebar) ---------- */
+  .sidebar .add{
+    display:inline-flex; align-items:center; gap:10px;
+    background:#eee; border-radius:999px; padding:8px 14px; font-weight:700;
+    user-select:none;
+  }
+  .menu{margin-top:16px; display:grid; gap:12px}
+  .menu a{
+    display:flex; align-items:center; gap:12px;
+    padding:10px 12px; border-radius:14px; text-decoration:none; color:#111;
+  }
+  .menu a:hover{background:#f5f5f5}
+  .icon{width:24px; height:24px; border:2px solid #111; border-radius:6px; display:inline-block}
+
+  /* ---------- Center (chat) ---------- */
+  .messages-list{list-style:none; margin:0; padding:0; overflow:auto; flex:1}
+  .message{padding:12px 8px}
+  .message .message-text{
+    background:#f3f4f6; padding:10px 14px; border-radius:12px; display:inline-block; max-width:72%;
+  }
+  .message .message-sender{font-size:13px; color:#444; margin-bottom:4px}
+  .message.sent{display:flex; justify-content:flex-end}
+  .message.sent .message-text{background:#dcf8c6}
+
+  .composer{display:flex; gap:10px; padding-top:12px}
+  .input{
+    flex:1; display:flex; align-items:center; gap:10px;
+    background:#e5e7eb; border-radius:16px; padding:10px 12px;
+  }
+  .input input{all:unset; flex:1}
+  .send{
+    width:44px; height:44px; border:none; border-radius:999px;
+    background:#111; color:#fff; display:grid; place-items:center; cursor:pointer;
+  }
+
+  /* ---------- Right (logo) ---------- */
+  .right .bot-badge{display:flex; justify-content:center; margin:36px 0 12px}
+  .right .bot-logo{
+    width:170px; height:170px; border-radius:50%; background:#ffffff;
+    display:grid; place-items:center; font-size:64px;
+  }
+  .right .bot-logo img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .right .title{font-size:28px; text-align:center; font-weight:800}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:1100px){
+    .app{grid-template-columns:1fr}
+    .sidebar,.right{display:none}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- /* ---------- Top bar ---------- */ -->
+<div class="topbar">
+  <div class="brand">
+    <span class="bot"></span>
+    <span>Bone Analysis AI</span>
+  </div>
+  <div class="dot"></div>
+</div>
+
+<div class="app">
+  <!-- Left -->
+  <aside class="panel sidebar">
+    <div class="add">＋ add</div>
+    <nav class="menu">
+      <a href="#"><span class="ico">📰</span><span>News Chat</span></a>
+      <a href="#"><span class="ico">📁</span><span>Folder</span></a>
+      <a href="#"><span class="ico">🖼️</span><span>Photo</span></a>
+      <a href="#"><span class="ico">📚</span><span>Histories</span></a>
+    </nav>
+  </aside>
+
+  <!-- Center -->
+  <main class="panel chat">
+    <h3>Chat</h3>
+    <ul class="messages-list">
+      <li class="message received">
+        <div class="message-text">
+          <div class="message-sender"><b>Bone Analysis AI</b></div>
+          <div class="message-content">Hi {{user.username}}, I am a doctor, you can ask me anything.</div>
+        </div>
+      </li>
+    </ul>
+
+    <form class="composer message-form">
+      {% csrf_token %}
+      <div class="input">
+        <input type="text" class="message-input" placeholder="Ask Me anything .....">
+      </div>
+      <button type="submit" class="send" aria-label="Send">⇪😍</button>
+    </form>
+  </main>
+
+  <!-- Right -->
+  {% load static %}
+  <aside class="panel right">
+    <div class="bot-badge">
+      <div class="bot-logo">
+        <image src="{% static '25346-removebg-preview.png' %}" alty="Bone Analisys AI Logo" width="100" height="100">
+      </div>
+    </div>
+    <div class="title">Bone Analysis AI</div>
+  </aside>
+</div>
+
+
+<script>
+  const messagesList = document.querySelector('.messages-list');
+  const messageForm  = document.querySelector('.message-form');
+  const messageInput = document.querySelector('.message-input');
+
+  messageForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const message = messageInput.value.trim();
+    if(!message) return;
+
+    // แสดงข้อความผู้ใช้
+    const you = document.createElement('li');
+    you.className = 'message sent';
+    you.innerHTML = `
+      <div class="message-text">
+        <div class="message-sender"><b>You</b></div>
+        <div class="message-content"></div>
+      </div>`;
+    you.querySelector('.message-content').textContent = message;
+    messagesList.appendChild(you);
+    messagesList.scrollTop = messagesList.scrollHeight;
+    messageInput.value = '';
+
+    // เรียก backend
+    fetch('', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({
+        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'message': message
+      })
+    })
+    .then(r => r.json())
+    .then(data => {
+      const bot = document.createElement('li');
+      bot.className = 'message received';
+      bot.innerHTML = `
+        <div class="message-text">
+          <div class="message-sender"><b>AI Chatbot</b></div>
+          <div class="message-content"></div>
+        </div>`;
+      bot.querySelector('.message-content').textContent = data.response ?? '';
+      messagesList.appendChild(bot);
+      messagesList.scrollTop = messagesList.scrollHeight;
+    })
+    .catch(() => {});
+  });
+</script>
+{% endblock %}
