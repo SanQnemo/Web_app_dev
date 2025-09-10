@@ -31,9 +31,7 @@
     background-image: url("{% static '25346-removebg-preview.png' %}");
     background-size: cover;
     background-position: center;
-    
   }
-
 
   /* ---------- App grid ---------- */
   .app{
@@ -64,27 +62,6 @@
   .menu a:hover{background:#f5f5f5}
   .icon{width:24px; height:24px; border:2px solid #111; border-radius:6px; display:inline-block}
 
-  /* ---------- Center (chat) ---------- */
-  .messages-list{list-style:none; margin:0; padding:0; overflow:auto; flex:1}
-  .message{padding:12px 8px}
-  .message .message-text{
-    background:#f3f4f6; padding:10px 14px; border-radius:12px; display:inline-block; max-width:72%;
-  }
-  .message .message-sender{font-size:13px; color:#444; margin-bottom:4px}
-  .message.sent{display:flex; justify-content:flex-end}
-  .message.sent .message-text{background:#dcf8c6}
-
-  .composer{display:flex; gap:10px; padding-top:12px}
-  .input{
-    flex:1; display:flex; align-items:center; gap:10px;
-    background:#e5e7eb; border-radius:16px; padding:10px 12px;
-  }
-  .input input{all:unset; flex:1}
-  .send{
-    width:44px; height:44px; border:none; border-radius:999px;
-    background:#111; color:#fff; display:grid; place-items:center; cursor:pointer;
-  }
-
   /* ---------- Right (logo) ---------- */
   .right .bot-badge{display:flex; justify-content:center; margin:36px 0 12px}
   .right .bot-logo{
@@ -100,6 +77,35 @@
   @media (max-width:1100px){
     .app{grid-template-columns:1fr}
     .sidebar,.right{display:none}
+  }
+
+  /* Custom styles for patient database */
+  .patient-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  .patient-table th, .patient-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  .patient-table th {
+    background-color: #f4f4f4;
+  }
+  .patient-table tr:hover {
+    background-color: #f5f5f5;
+  }
+  .view-xray-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .view-xray-btn:hover {
+    background-color: #45a049;
   }
 </style>
 {% endblock %}
@@ -127,85 +133,47 @@
   </aside>
 
   <!-- Center -->
-  <main class="panel chat">
-    <h3>Chat</h3>
-    <ul class="messages-list">
-      <li class="message received">
-        <div class="message-text">
-          <div class="message-sender"><b>Bone Analysis AI</b></div>
-          <div class="message-content">Hi {{user.username}}, I am a doctor, you can ask me anything.</div>
-        </div>
-      </li>
-    </ul>
-
-    <form class="composer message-form">
-      {% csrf_token %}
-      <div class="input">
-        <input type="text" class="message-input" placeholder="Ask Me anything .....">
-      </div>
-      <button type="submit" class="send" aria-label="Send">⇪😍</button>
-    </form>
+  <main class="panel">
+    <h3>Patient Database</h3>
+    <!-- Patient Data Table -->
+    <table class="patient-table">
+      <thead>
+        <tr>
+          <th>Patient ID</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Diagnosis</th>
+          <th>X-ray images</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Example rows, replace with dynamic data from backend -->
+        <tr>
+          <td>001</td>
+          <td>John Doe</td>
+          <td>45</td>
+          <td>Fracture</td>
+          <td><button class="view-xray-btn" onclick="window.location.href='/xray/001/'">View X-ray</button></td>
+        </tr>
+        <tr>
+          <td>002</td>
+          <td>Jane Smith</td>
+          <td>60</td>
+          <td>Osteoporosis</td>
+          <td><button class="view-xray-btn" onclick="window.location.href='/xray/002/'">View X-ray</button></td>
+        </tr>
+      </tbody>
+    </table>
   </main>
 
   <!-- Right -->
-  {% load static %}
   <aside class="panel right">
     <div class="bot-badge">
       <div class="bot-logo">
-        <image src="{% static '25346-removebg-preview.png' %}" alty="Bone Analisys AI Logo" width="100" height="100">
+        <img src="{% static '25346-removebg-preview.png' %}" alt="Bone Analisys AI Logo">
       </div>
     </div>
     <div class="title">Bone Analysis AI</div>
   </aside>
 </div>
-
-
-<script>
-  const messagesList = document.querySelector('.messages-list');
-  const messageForm  = document.querySelector('.message-form');
-  const messageInput = document.querySelector('.message-input');
-
-  messageForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const message = messageInput.value.trim();
-    if(!message) return;
-
-    // แสดงข้อความผู้ใช้
-    const you = document.createElement('li');
-    you.className = 'message sent';
-    you.innerHTML = `
-      <div class="message-text">
-        <div class="message-sender"><b>You</b></div>
-        <div class="message-content"></div>
-      </div>`;
-    you.querySelector('.message-content').textContent = message;
-    messagesList.appendChild(you);
-    messagesList.scrollTop = messagesList.scrollHeight;
-    messageInput.value = '';
-
-    // เรียก backend
-    fetch('', {
-      method: 'POST',
-      headers: {'Content-Type':'application/x-www-form-urlencoded'},
-      body: new URLSearchParams({
-        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        'message': message
-      })
-    })
-    .then(r => r.json())
-    .then(data => {
-      const bot = document.createElement('li');
-      bot.className = 'message received';
-      bot.innerHTML = `
-        <div class="message-text">
-          <div class="message-sender"><b>AI Chatbot</b></div>
-          <div class="message-content"></div>
-        </div>`;
-      bot.querySelector('.message-content').textContent = data.response ?? '';
-      messagesList.appendChild(bot);
-      messagesList.scrollTop = messagesList.scrollHeight;
-    })
-    .catch(() => {});
-  });
-</script>
 {% endblock %}

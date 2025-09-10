@@ -157,3 +157,6 @@ def register(request):
 def logout(request):
     auth.logout(request)
     return redirect('chatbot')
+
+def folder(request):
+    return render(request, 'folder.html')
