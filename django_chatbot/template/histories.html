@@ -79,34 +79,37 @@
     .sidebar,.right{display:none}
   }
 
-  /* Custom styles for patient database */
-  .patient-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  /* 1) ให้ panel กลางเลื่อนภายในได้ */
+  main.panel{
+    overflow: auto;   /* สำคัญ */
+    min-height: 0;    /* มีอยู่แล้วก็ดี */
   }
-  .patient-table th, .patient-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  .patient-table th {
-    background-color: #f4f4f4;
-  }
-  .patient-table tr:hover {
-    background-color: #f5f5f5;
-  }
-  .view-xray-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  .view-xray-btn:hover {
-    background-color: #45a049;
-  }
+
+  /* กรอบหัว */
+.chat-head{
+  background:#f4f4f4;
+  padding:15px;
+  border-radius:8px;
+  font-weight:700;
+  margin-bottom:12px; /* เว้นระยะกับรายการ */
+}
+
+/* ตัวเลื่อนของรายการแชต */
+.chat-body{
+  overflow:auto;
+  min-height:0;            /* สำคัญเมื่ออยู่ใน flex */
+  max-height: calc(100vh - 220px); 
+  /* ปรับตัวเลขให้พอดีกับ layout ของคุณ */
+}
+
+/* กันล้นข้อความ */
+.chat-table{ table-layout: fixed; width:100%; border-collapse: separate; border-spacing:0; }
+.chat-table td{ white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; }
+.chat-table .line{ padding:4px 0; }
+.chat-table .line.bot{ color:#050c95; background:#d0e7f3; padding:8px 10px; border-radius:8px; }
+
+  
+
 </style>
 {% endblock %}
 
@@ -128,42 +131,46 @@
       <a href="{% url 'chatbot' %}"><span class="ico">📰</span><span>News Chat</span></a>
       <a href="{% url 'folder' %}"><span class="ico">📁</span><span>Folder</span></a>
       <a href="#"><span class="ico">🖼️</span><span>Photo</span></a>
-      <a href="#"><span class="ico">📚</span><span>Histories</span></a>
+      <a href="{% url 'histories' %}"><span class="ico">📚</span><span>Histories</span></a>
     </nav>
   </aside>
 
   <!-- Center -->
   <main class="panel">
-    <h3>Patient Database</h3>
-    <!-- Patient Data Table -->
-    <table class="patient-table">
-      <thead>
-        <tr>
-          <th>Patient ID</th>
-          <th>Name</th>
-          <th>Age</th>
-          <th>Diagnosis</th>
-          <th>X-ray images</th>
-        </tr>
-      </thead>
+    <h3>Chat</h3>
+
+    <!-- หัวคงที่ -->
+    <div class="chat-head"><strong>Username:</strong> {{ user.username }}</div>
+
+    <!-- ตัวเลื่อน -->
+    <div class="chat-body">
+      <table class="chat-table">
+
+    <!-- Chat Table -->
+    <table class="chat-table">
       <tbody>
-        <!-- Example rows, replace with dynamic data from backend -->
-        <tr>
-          <td>001</td>
-          <td>John Doe</td>
-          <td>45</td>
-          <td>Fracture</td>
-          <td><button class="view-xray-btn" onclick="window.location.href='/xray/001/'">View X-ray</button></td>
-        </tr>
-        <tr>
-          <td>002</td>
-          <td>Jane Smith</td>
-          <td>60</td>
-          <td>Osteoporosis</td>
-          <td><button class="view-xray-btn" onclick="window.location.href='/xray/002/'">View X-ray</button></td>
-        </tr>
-      </tbody>
+  {% for c in chats %}
+    <tr>
+      <td class="line"><strong>{{ c.user.username }}:</strong> {{ c.message }}</td> <!-- ใช้ __str__ ของ Chat -->
+      <!-- หรือจะแยกคอลัมน์ -->
+      <!-- <td>{{ c.user.username }}</td>
+      <td>{{ c.message }}</td>
+      <td>{{ c.response }}</td>
+      <td>{{ c.created_at }}</td> -->
+    </tr>
+
+    {% if c.response %}
+    <tr>
+      <td class="line bot"><strong>Bot:</strong> {{ c.response|linebreaksbr }}</td>
+    </tr>
+    {% endif %}
+  {% empty %}
+    <tr><td class="line">No chats</td></tr>
+  {% endfor %}
+</tbody>
+
     </table>
+    </div>
   </main>
 
   <!-- Right -->

@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 
 from django.contrib import auth
@@ -15,9 +14,41 @@ import logging
 
 logger = logging.getLogger(__name__)
 from django.contrib.auth import get_user_model
-from .llms import generate_reply
 
 import os
+from openai import OpenAI
+import google.generativeai as genai
+from google.generativeai.types import GenerationConfig
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceEmbeddings
+import base64
+import json
+import csv
+from dotenv import load_dotenv
+
+from .models import Chat
+from django.utils import timezone  
+
+from bonechat.models import Chat
+from django.contrib.auth.decorators import login_required
+
+from PIL import Image
+
+# ===== Load ENV & Configure =====
+load_dotenv()
+API = os.getenv("GOOGLE_API_KEY")
+genai.configure(api_key=API)
+
+# สร้างโมเดล (ยังมี system_instruction เหมือนเดิม)
+llm = genai.GenerativeModel(
+    model_name="gemini-2.5-flash",
+    generation_config=GenerationConfig(
+        temperature=0.7,
+        top_p=1,
+        top_k=1,
+    ),
+    system_instruction="You are a doctor. Your name is Bone Analysis AI."
+)
 
 # ====== Chat Memory Helpers ======
 MAX_TURNS = 12  # เก็บล่าสุด 12 เทิร์น (24 ข้อความ: user+model)
@@ -56,32 +87,28 @@ def _reset_chat(session):
 
 # ====== Core LLM Call with Memory ======
 def call_gemini_with_memory(session, user_prompt: str) -> str:
-    """Start a fresh chat from session history and get a reply."""
+    """
+    สร้าง chat session ใหม่ทุกครั้ง โดยใส่ history จาก session เข้าไป
+    ส่งข้อความล่าสุด แล้วบันทึกคำตอบกลับเข้า session
+    """
     try:
-        # Convert our history to Gemini history format
         turns = _get_turns(session)
-        gem_history = []
-        for t in turns:
-            role = t.get('role')
-            txt  = t.get('text','')
-            if role in ('user','model') and txt:
-                gem_history.append({'role': role, 'parts': [{'text': txt}]})
-        # Generate
-        reply = generate_reply(gem_history, user_prompt)
-        # Save back
-        _append_turn(session, 'user', user_prompt)
-        _append_turn(session, 'model', reply)
-        return reply
-    except Exception as e:
-        logger.exception("LLM call failed")
-        return "⚠️ LLM error: {}".format(e)
+        chat = llm.start_chat(history=_to_gemini_history(turns))
+        resp = chat.send_message(user_prompt)
 
+        # เก็บประวัติ (เราเก็บแบบบาง ๆ ของตัวเอง เพื่อให้ serializable แน่ ๆ)
+        _append_turn(session, "user", user_prompt)
+        _append_turn(session, "model", resp.text)
+
+        return resp.text
+    except Exception as e:
         return f"Sorry, I encountered an error while processing your request. ({e})"
 
 # ====== Django View ======
 @require_http_methods(["GET", "POST"])
-@csrf_protect
 def chatbot(request):
+    #ทำให้เวลาเราดูข้อมูลที่เราเคย Chat ตงกับ User
+    chats = Chat.objects.filter(user=request.user)
     # reset history ถ้าผู้ใช้ส่งคำสั่งพิเศษ
     if request.method == "POST" and request.POST.get("reset") == "1":
         _reset_chat(request.session)
@@ -98,6 +125,9 @@ def chatbot(request):
             return JsonResponse({"ok": True, "message": "Chat history has been reset."})
 
         response = call_gemini_with_memory(request.session, message)
+
+        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now())
+        chat.save()
         return JsonResponse({'message': message, 'response': response})
 
     # GET -> render UI
@@ -106,16 +136,17 @@ def chatbot(request):
 
 def login(request):
     if request.method == 'POST':
-        username = request.POST.get('username','').strip()
-        password = request.POST.get('password','')
-
+        username = request.POST['username']
+        password = request.POST['password']
         user = auth.authenticate(request, username=username, password=password)
         if user is not None:
             auth.login(request, user)
-            return redirect('chatbot')  # ชื่อเส้นทางของคุณถูกแล้ว
+            return redirect('chatbot')
         else:
-            return render(request, 'login.html', {'error_message': 'Invalid username or password'})
-    return render(request, 'login.html')
+            error_message = 'Invalid username or password'
+            return render(request, 'login.html', {'error_message': error_message})
+    else:
+        return render(request, 'login.html')
 
 def register(request):
     if request.method == 'POST':
@@ -160,3 +191,11 @@ def logout(request):
 
 def folder(request):
     return render(request, 'folder.html')
+
+def histories(request):
+    qs = Chat.objects.select_related('user').order_by('-created_at')
+    # ถ้าไม่ใช่ superuser ให้เห็นเฉพาะของตัวเอง
+    if not request.user.is_superuser:
+        qs = qs.filter(user=request.user)
+    return render(request, 'histories.html', {'chats': qs})
+

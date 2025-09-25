@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block styles %}
+<style>
+  :root{
+    --bg:#000;            /* พื้นหลังดำ */
+    --panel:#111;         /* สีเงาเข้มๆ */
+    --pill:#e6e6e6;       /* สีช่องกรอก */
+    --pill-focus:#f0f0f0;
+    --text:#fff;
+    --muted:#a3a3a3;
+    --radius:9999px;      /* pill */
+    --w:360px;            /* ความกว้างฟอร์ม */
+  }
+
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,"Noto Sans",sans-serif;
+  }
+
+  /* -------- center container -------- */
+  .login-wrap{
+    min-height:100svh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+
+  /* -------- card (โปร่ง ๆ ไม่ต้องมีกรอบ) -------- */
+  .login-card{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+  }
+
+  /* -------- bot / logo -------- */
+  .bot{
+    width:min(38vw,280px);
+    height:auto;
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,.6));
+    user-select:none;
+    -webkit-user-drag: none;
+  }
+
+  /* -------- form -------- */
+  .login-form{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    width:100%;
+  }
+  .pill{
+    width:min(90vw, var(--w));
+    padding:14px 18px;
+    border-radius:var(--radius);
+    border:none;
+    outline:none;
+    background:var(--pill);
+    color:#111;
+    font-size:16px;
+    box-shadow:0 2px 0 rgba(255,255,255,.06) inset,
+               0 10px 30px rgba(0,0,0,.45);
+  }
+  .pill::placeholder{ color:#6b7280; }
+  .pill:focus{
+    background:var(--pill-focus);
+    box-shadow:0 0 0 3px rgba(255,255,255,.1), 0 12px 40px rgba(0,0,0,.55);
+  }
+
+  /* ปุ่มให้กลืนกับดีไซน์ (แม้ภาพต้นฉบับไม่เห็นปุ่ม) */
+  .btn{
+    width:min(90vw, var(--w));
+    padding:14px 18px;
+    border-radius:var(--radius);
+    border:none;
+    cursor:pointer;
+    background:#ffffff;
+    color:#111;
+    font-weight:700;
+    font-size:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.55);
+    transition:transform .05s ease;
+  }
+  .btn:active{ transform:translateY(1px); }
+
+  /* error */
+  .alert{
+    width:min(90vw, var(--w));
+    background:#2b0004;
+    color:#ffb3b8;
+    border:1px solid #5c1a20;
+    padding:10px 14px;
+    border-radius:12px;
+    font-size:14px;
+  }
+
+  /* forgot link */
+  .row-end{
+    width:min(90vw, var(--w));
+    display:flex;
+    justify-content:flex-end;
+  }
+  .forgot{
+    color:var(--muted);
+    text-decoration:none;
+    font-size:13px;
+  }
+  .forgot:hover{ text-decoration:underline; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrap">
+  <div class="login-card">
+    <!-- โลโก้/มาสคอต -->
+    <img class="bot" src="{% static '25346-removebg-preview.png' %}" alt="med bot">
+
+    {% if error_message %}
+      <div class="alert" role="alert">{{ error_message }}</div>
+    {% endif %}
+
+    <form class="login-form" method="post">
+      {% csrf_token %}
+
+      <!-- ใช้ type="email" แต่ยังคง name="username" ให้เข้ากับ view ที่มีอยู่ -->
+      <input class="form-control" type="text" id="username" name="username"
+             placeholder="Enter username" required>
+
+      <input class="form-control" type="password" id="password" name="password"
+             placeholder="Enter password" required>
+
+      <div class="row-end">
+        <a class="Register" href="{% url 'register' %}">Register ?</a>
+      </div>
+
+      <!-- ปุ่มส่ง (ถ้าอยากให้เหมือนภาพเป๊ะ สามารถลบปุ่มนี้แล้ว submit ด้วย Enter ก็ได้) -->
+      <button type="submit" class="btn">Login</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
