@@ -103,88 +103,105 @@
   }
 
   /* ---------- Popup Modal ---------- */
-.popup-modal {
-  display: none; /* ซ่อน modal เริ่มต้น */
-  position: fixed;
-  z-index: 100;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* พื้นหลังโปร่งแสง */
-  padding-top: 60px;
-  flex-direction: column;    /* ทำให้ปุ่มอยู่ในแนวตั้ง */
-  align-items: center;       /* จัดให้ปุ่มอยู่ตรงกลาง */
-  justify-content: center;   /* จัดตำแหน่งระหว่างปุ่ม */
-}
+ .popup-modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    align-items: center;
+    justify-content: center;
+  }
 
-.popup-content {
-  background-color: #fff;
-  position: absolute;
-  top: 150px;   /* ระยะจากขอบบน */
-  left: 40px;  /* ระยะจากขอบซ้าย */
-  margin: auto;
-  padding:5px;
-  border-radius: 20px;
-  width: 20%;    
-  align-items: center;    /* จัดให้อยู่ตรงกลางแนวตั้ง */
-  gap: 0px;   
-  display: flex;            /* เว้นระยะระหว่างข้อความกับปุ่ม Upload */
-  align-items: center;     /* Center elements horizontally */
-  /* justify-content: center // Center elements vertically */
-  justify-content: center; /* เว้นระยะระหว่าง input และปุ่ม (จัดตำแหน่งบนล่าง) */
-  height: 50px;            /* กำหนดความสูงให้กับ .popup-content เพื่อให้ปุ่มอยู่กลาง */
-}
+  .popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    width: 300px;
+    text-align: center;
+  }
 
-.popup-content button {
-  margin-top: 5px; /* Adjust this value to move the button down */
-  margin-left: -130px; /* Adjust this to move the button to the right */
-  background-color: #4CAF50; /* สีพื้นหลังของปุ่ม */
-  color: white;              /* สีข้อความ */
-  padding: 6px 12px;        /* ขนาดของปุ่ม (สูง x กว้าง) */
-  border: none;              /* ไม่ให้มีขอบ */
-  border-radius: 10px;        /* มุมโค้งมน */
-  font-size: 16px;           /* ขนาดฟอนต์ */
-  cursor: pointer;           /* เปลี่ยนเคอร์เซอร์เป็นมือเมื่อชี้ที่ปุ่ม */
-  transition: background-color 0.3s; /* การเปลี่ยนสีพื้นหลังเมื่อโฮเวอร์ */
-}
+  .popup-content input {
+    margin: 10px 0;
+    width: 100%;
+  }
 
-.popup-content button:hover {
-  background-color: #45a049; /* สีพื้นหลังเมื่อโฮเวอร์ */
-  transform: scale(1.1);     /* ขยายขนาดของปุ่มเมื่อโฮเวอร์ */
-}
+  .popup-content button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 5px;
+  }
 
-.popup-content button:active {
-  background-color: #388e3c; /* สีพื้นหลังเมื่อคลิก */
-  transform: scale(0.95);     /* ลดขนาดของปุ่มเมื่อคลิก */
-}
+  .popup-content button:hover {
+    background-color: #45a049;
+  }
 
+  .message-input {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 6px 12px;
+    resize: none;
+    overflow: hidden;
+    min-height: 20px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+  }
 
+  /* Upload Status Styles */
+  .upload-status {
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: none;
+    align-items: center;
+    gap: 15px;
+  }
 
-.close-btn {
-  color: #aaa;
-  float: right;
-  font-size: 20px;
-  font-weight: bold;
-}
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+  }
 
-.close-btn:hover,
-.close-btn:focus {
-  color: rgb(196, 38, 38);
-  text-decoration: none;
-  cursor: pointer;
-}
+  .status-icon {
+    font-size: 16px;
+  }
 
-.message-input {
-  width: 100%;
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 6px 12px;
-  resize: none; /* Disable manual resizing */
-  overflow: hidden;
-  min-height: 20px;
-  font-size: 16px;
-}
+  .status-text {
+    font-size: 14px;
+    color: #495057;
+    font-weight: 500;
+  }
+
+  .clear-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-left: auto;
+  }
+
+  .clear-btn:hover {
+    background: #c82333;
+  }
 
 
   
@@ -216,19 +233,30 @@
   <!-- Center -->
   <main class="panel chat">
     <h3>Chat</h3>
+    
+    <!-- Upload Status Indicator -->
+    <div class="upload-status" id="uploadStatus">
+        <div class="status-item images-status">
+            <span class="status-icon">📸</span>
+            <span class="status-text" id="imagesStatus">No images</span>
+        </div>
+        <button class="clear-btn" onclick="clearUploads()">Clear</button>
+    </div>
+
     <ul class="messages-list">
       <li class="message received">
         <div class="message-text">
-          <div class="message-sender"><b>Bone Analysis AI</b></div>
-          <div class="message-content">Hi {{user.username}}, I am a doctor, you can ask me anything.</div>
+          <div class="message-sender"><b>AI chatbot</b></div>
+          <div class="message-content">Hi {{user.username}}, I am a medical AI specialist. Upload X-ray images or describe bone-related issues for analysis.</div>
         </div>
       </li>
     </ul>
 
-    <form class="composer message-form">
+    <!-- ADD enctype="multipart/form-data" HERE -->
+    <form class="composer message-form" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="input">
-        <textarea type="text" class="message-input" placeholder="Ask Me anything ...." rows="1"></textarea>
+        <textarea type="text" class="message-input" name="message" placeholder="Describe medical images or ask about bone analysis..." rows="1"></textarea>
       </div>
       <button type="submit" class="send" aria-label="Send">⇪</button>
     </form>
@@ -249,11 +277,15 @@
 <!-- Pop-up Modal -->
 <div class="popup-modal" id="popupModal">
   <div class="popup-content">
-    <!-- <span class="close-btn" id="closeModal">&times;</span> -->
-    <input type="file" id="imageInput" />
-    <button onclick="submitImage()">Up load</button>
+    <h4 style="margin: 0 0 15px 0;">Upload Medical Images</h4>
+    <input type="file" id="imageInput" name="medical_images" multiple accept="image/*" />
+    <div style="margin-top: 15px;">
+      <button onclick="handleImageUpload()">Upload Images</button>
+      <button onclick="closeModal()" style="background: #6c757d;">Cancel</button>
+    </div>
   </div>
 </div>
+
 
 
 
@@ -263,6 +295,9 @@
 const messagesList = document.querySelector('.messages-list');
 const messageForm = document.querySelector('.message-form');
 const messageInput = document.querySelector('.message-input');
+const uploadStatus = document.getElementById('uploadStatus');
+const imagesStatus = document.getElementById('imagesStatus');
+let uploadedImages = []; // Store uploaded images
 
 // เพิ่มเหตุการณ์เมื่อพิมพ์ข้อความใน textarea ให้ขยาย
 messageInput.addEventListener('input', () => {
@@ -278,22 +313,68 @@ messageInput.addEventListener('keydown', (e) => {
   }
 });
 
+// Update status display
+function updateStatusDisplay() {
+  const hasImages = uploadedImages.length > 0;
+  
+  if (hasImages) {
+    imagesStatus.textContent = `${uploadedImages.length} image(s) ready`;
+    imagesStatus.style.color = '#28a745';
+    uploadStatus.style.display = 'flex';
+  } else {
+    imagesStatus.textContent = 'No images';
+    imagesStatus.style.color = '#6c757d';
+    uploadStatus.style.display = 'none';
+  }
+}
+
+// Clear uploads
+function clearUploads() {
+  uploadedImages = [];
+  updateStatusDisplay();
+  
+  const notification = document.createElement('li');
+  notification.className = 'message received';
+  notification.innerHTML = `
+    <div class="message-text">
+      <div class="message-sender"><b>System</b></div>
+      <div class="message-content">🧹 Uploads cleared</div>
+    </div>`;
+  messagesList.appendChild(notification);
+  messagesList.scrollTop = messagesList.scrollHeight;
+}
+
 // ฟังก์ชันการส่งข้อความ
 function sendMessage() {
   const message = messageInput.value.trim();
-  if (!message) return; // ถ้าข้อความว่างไม่ให้ส่ง
+  if (!message && uploadedImages.length === 0) return; // ถ้าข้อความว่างไม่ให้ส่ง
 
   // แสดงข้อความผู้ใช้
   const userMessage = document.createElement('li');
   userMessage.className = 'message sent';
-  userMessage.innerHTML = `
-    <div class="message-text">
-      <div class="message-sender"><b>You</b></div>
-      <div class="message-content">${message}</div>
-    </div>`;
-  messagesList.appendChild(userMessage);
-  messagesList.scrollTop = messagesList.scrollHeight;
-  messageInput.value = ''; // ลบข้อความที่พิมพ์หลังจากส่ง
+   let messageContent = message || "[Image analysis request]";
+    if (uploadedImages.length > 0) {
+        messageContent += ` 📸 (${uploadedImages.length} images)`;
+    }
+    
+    userMessage.innerHTML = `
+        <div class="message-text">
+            <div class="message-sender"><b>You</b></div>
+            <div class="message-content">${messageContent}</div>
+        </div>`;
+    messagesList.appendChild(userMessage);
+    messagesList.scrollTop = messagesList.scrollHeight;
+    messageInput.value = '';
+
+  // เตรียมฟอร์มของข้อมูล
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    formData.append('message', message || "Analyze the uploaded medical images");
+    
+    // Add uploaded images
+    uploadedImages.forEach((file, index) => {
+        formData.append('medical_images', file);
+    });
 
   // ส่งข้อความไปยัง backend (สามารถแก้ไขให้เรียก backend ของคุณได้)
   fetch('', {
@@ -315,8 +396,22 @@ function sendMessage() {
       </div>`;
     messagesList.appendChild(bot);
     messagesList.scrollTop = messagesList.scrollHeight;
+
+    // Clear uploaded images after successful send
+        uploadedImages = [];
   })
-  .catch(() => {});
+  .catch(error => {
+        console.error('Error:', error);
+        const errorMsg = document.createElement('li');
+        errorMsg.className = 'message received';
+        errorMsg.innerHTML = `
+            <div class="message-text">
+                <div class="message-sender"><b>System</b></div>
+                <div class="message-content">Error sending message. Please try again.</div>
+            </div>`;
+        messagesList.appendChild(errorMsg);
+        messagesList.scrollTop = messagesList.scrollHeight;
+    });
 }
 
 // เมื่อคลิกปุ่มส่งข้อความหรือกด Enter
@@ -348,17 +443,36 @@ function submitImage() {
   const imageInput = document.getElementById('imageInput');
   const imageFile = imageInput.files[0];
   
-  if (imageFile) {
-    console.log('Upload:', imageFile);
-    // คุณสามารถเพิ่มฟังก์ชันการอัปโหลดรูปที่นี่
-  } else {
-    console.log('No image selected');
-  }
-  popupModal.style.display = 'none'; // ปิด modal หลังจากอัปโหลด
+   if (files.length > 0) {
+        // Store files for sending with message
+        uploadedImages = Array.from(files);
+        
+        // Show preview or notification
+        const notification = document.createElement('li');
+        notification.className = 'message received';
+        notification.innerHTML = `
+            <div class="message-text">
+                <div class="message-sender"><b>System</b></div>
+                <div class="message-content">📸 ${files.length} image(s) ready for analysis</div>
+            </div>`;
+        messagesList.appendChild(notification);
+        messagesList.scrollTop = messagesList.scrollHeight;
+        
+        // Update status display
+        updateStatusDisplay();
+
+        // Clear the file input
+        imageInput.value = '';
+        closeModal();
+
+
+        // Auto-focus on message input
+        messageInput.focus();
+    } else {
+        alert('Please select at least one image');
+    }
 }
 
-
-
-
+updateStatusDisplay();
 </script>
 {% endblock %}

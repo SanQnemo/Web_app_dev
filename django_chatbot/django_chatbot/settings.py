@@ -84,6 +84,11 @@ DATABASES = {
     }
 }
 
+FAISS_STORAGE_PATH = BASE_DIR / 'faiss_storage'
+FAISS_TEXT_PATH = FAISS_STORAGE_PATH / 'faiss_text'
+FAISS_TABULAR_PATH = FAISS_STORAGE_PATH / 'faiss_tabular'
+SYSTEM_IT_PATH = BASE_DIR / 'system_it'
+SYSTEM_TEMPLATE_FILE = os.path.join(SYSTEM_IT_PATH, "radiology_report_template.json")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

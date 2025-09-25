@@ -1,0 +1,28 @@
+{
+  "clinical_history": "[Summarize clinical background of the patient if provided, else 'None']",
+  "comparison": "[If a prior study is mentioned, state it; otherwise 'None']",
+  "procedure": "[Modality and views studied]",
+  "findings": {
+    "fracture": "[Present/Absent]",
+    "fracture_type_and_location": "[Specify if present]",
+    "displacement": "[Angulation/translation, unchanged or new]",
+    "healing": "[Signs of callus, lucency, union]",
+    "soft_tissues": "[Swelling, effusion, normal]",
+    "other_findings": {
+      "radial_height": {
+        "value": "",
+        "status": "Compare the value to the normal average (10.86) and state if shortening is within acceptable limits (+/- 2.15 )."
+      },
+      "radial_inclination": {
+        "value": "",
+        "status": "Compare the value to the normal average (25.24) and state if the change is within acceptable limits (+/- 3.13 )."
+      },
+      "ulnar_variance": {
+        "value": "",
+        "status": "Compare the value to the normal average (1.85 ) and state if the change is within acceptable limits (+/- 0.96 )."
+      },
+      "druj": "[Description of distal radioulnar joint]"
+    }
+  },
+  "impression": "[Concise conclusion integrating the above, like a real radiologist]"
+}
